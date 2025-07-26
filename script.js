@@ -23,6 +23,7 @@ function eliminarDelCarrito(indice) {
 function actualizarCarrito() {
   const lista = document.getElementById("lista-carrito");
   const totalCarrito = document.getElementById("total-carrito");
+  const entrega = document.getElementById("entrega") ? document.getElementById("entrega").value : "Retiro en Tienda";
 
   lista.innerHTML = "";
 
@@ -39,17 +40,21 @@ function actualizarCarrito() {
     lista.appendChild(li);
   });
 
-  const total = carrito.length * PRECIO_EMPANADA;
-  totalCarrito.innerHTML = `<strong>Total:</strong> $${total}`;
+  let total = carrito.length * PRECIO_EMPANADA;
+  if (entrega === "Despacho a Domicilio") {
+    total += COSTO_DELIVERY;
+    totalCarrito.innerHTML = `<strong>Total:</strong> $${total} (incluye $${COSTO_DELIVERY} de delivery)`;
+  } else {
+    totalCarrito.innerHTML = `<strong>Total:</strong> $${total}`;
+  }
 }
 
-// Cambiar estado del campo dirección
 function cambiarEntrega() {
   const entrega = document.getElementById("entrega").value;
   const direccionInput = document.getElementById("direccion");
-  const direccionTienda = document.getElementById("direccion-casa");
+  const direccionTienda = document.getElementById("direccion-tienda");
 
-  if (entrega === "Retiro en Casa") {
+  if (entrega === "Retiro en Tienda") {
     direccionInput.disabled = true;
     direccionInput.value = "";
     direccionTienda.style.display = "block";
@@ -57,7 +62,9 @@ function cambiarEntrega() {
     direccionInput.disabled = false;
     direccionTienda.style.display = "none";
   }
+  actualizarCarrito();
 }
+
 function enviarPedido() {
   const direccionInput = document.getElementById("direccion");
   const entrega = document.getElementById("entrega").value;
@@ -68,7 +75,7 @@ function enviarPedido() {
     return;
   }
 
-  let direccion = (entrega === "Direccion de Retiro") ? DIRECCION_TIENDA : direccionInput.value;
+  let direccion = (entrega === "Retiro en Tienda") ? DIRECCION_TIENDA : direccionInput.value;
 
   if (entrega === "Despacho a Domicilio" && direccion.trim() === "") {
     alert("Por favor, ingresa tu dirección para el despacho.");
@@ -84,12 +91,15 @@ function enviarPedido() {
   carrito.forEach((item, index) => {
     mensaje += `${index + 1}. Empanada ${item.tipo} (${item.coccion}) - $${PRECIO_EMPANADA}\n`;
   });
-  mensaje += `\nMétodo de entrega: ${entrega}`;
+  if (entrega === "Despacho a Domicilio") {
+    mensaje += `\nCosto de delivery: $${COSTO_DELIVERY}`;
+  }
+  mensaje += `\n\nMétodo de entrega: ${entrega}`;
   mensaje += `\nDirección: ${direccion}`;
   mensaje += `\nMétodo de pago: ${pago}`;
   mensaje += `\n\nTOTAL: $${total}`;
 
-  const numeroWhatsApp = "56988039496"; 
-  const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, "_blank");
+  const numeroWhatsApp = "56988039496";
+  const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
+  window.location.href = url;
 }
