@@ -99,7 +99,7 @@ function enviarPedido() {
   mensaje += `\nMétodo de pago: ${pago}`;
   mensaje += `\n\nTOTAL: $${total}`;
 
-  const numeroWhatsApp = "56912345678";
+  const numeroWhatsApp = "56988039496";
   const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
   window.location.href = url;
 }
