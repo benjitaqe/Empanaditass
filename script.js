@@ -83,7 +83,9 @@ function enviarPedido() {
   }
 
   let total = carrito.length * PRECIO_EMPANADA;
+  let detalleDelivery = "";
   if (entrega === "Despacho a Domicilio") {
+    detalleDelivery = `\nCosto de delivery: $${COSTO_DELIVERY}`;
     total += COSTO_DELIVERY;
   }
 
@@ -91,15 +93,13 @@ function enviarPedido() {
   carrito.forEach((item, index) => {
     mensaje += `${index + 1}. Empanada ${item.tipo} (${item.coccion}) - $${PRECIO_EMPANADA}\n`;
   });
-  if (entrega === "Despacho a Domicilio") {
-    mensaje += `\nCosto de delivery: $${COSTO_DELIVERY}`;
-  }
-  mensaje += `\n\nMétodo de entrega: ${entrega}`;
+  mensaje += `${detalleDelivery}\n`;
+  mensaje += `\nMétodo de entrega: ${entrega}`;
   mensaje += `\nDirección: ${direccion}`;
   mensaje += `\nMétodo de pago: ${pago}`;
   mensaje += `\n\nTOTAL: $${total}`;
 
-  const numeroWhatsApp = "56988039496";
+  const numeroWhatsApp = "56912345678";
   const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
   window.location.href = url;
 }
